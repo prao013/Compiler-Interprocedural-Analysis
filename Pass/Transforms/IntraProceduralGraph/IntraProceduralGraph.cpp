@@ -359,6 +359,11 @@ namespace
                     }
                 } // end if
                 */
+		else if(inst.getOpcode() == Instruction::Call){
+		Function* G= cast<CallInst>(inst).getCalledFunction();
+		Function& H=*G;
+		errs()<<H;
+		}
             } // end for inst
         }     // end for block
 
