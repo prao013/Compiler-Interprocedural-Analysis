@@ -30,7 +30,23 @@ using namespace llvm;
 //     ALLOC = "m"
 // };
 //Suhas Start
+// print the edges
+void print(vector<edge> edgeList)
+{
+    for (int i = 0; i < edgeList.size(); i++)
+    {
+        errs() << edgeList[i].startV << "\t" << edgeList[i].endV << "\t" << edgeList[i].label << "\n";
+    }
+}
 
+/// print k-v pairs of a map
+void print(unordered_map<string, string> targetMap)
+{
+    for (const auto &kv : targetMap)
+    {
+        errs() << kv.first << ":" << kv.second << "\n";
+    }
+}
 
 // void print(unordered_map <string, pair<string, string>> targetMap) {
 //     for (const auto &kv : targetMap) {
@@ -40,6 +56,7 @@ using namespace llvm;
 
 namespace
 {
+
 	void visitor1(Function &F)
     {
 
@@ -64,23 +81,7 @@ unordered_map<string, string> expToVer;
 /// edges map. direct edge from k to v. E.g., (1, 2) means 1 has an direct edge to 2.
 vector<edge> edgeList;
 
-// print the edges
-void print(vector<edge> edgeList)
-{
-    for (int i = 0; i < edgeList.size(); i++)
-    {
-        errs() << edgeList[i].startV << "\t" << edgeList[i].endV << "\t" << edgeList[i].label << "\n";
-    }
-}
 
-/// print k-v pairs of a map
-void print(unordered_map<string, string> targetMap)
-{
-    for (const auto &kv : targetMap)
-    {
-        errs() << kv.first << ":" << kv.second << "\n";
-    }
-}
 
         errs() << "IntraProceduralGraph: " << F.getName() << "\n";
         for (auto &basic_block : F)
@@ -404,22 +405,7 @@ unordered_map<string, string> expToVer;
 vector<edge> edgeList;
 
 // print the edges
-void print(vector<edge> edgeList)
-{
-    for (int i = 0; i < edgeList.size(); i++)
-    {
-        errs() << edgeList[i].startV << "\t" << edgeList[i].endV << "\t" << edgeList[i].label << "\n";
-    }
-}
 
-/// print k-v pairs of a map
-void print(unordered_map<string, string> targetMap)
-{
-    for (const auto &kv : targetMap)
-    {
-        errs() << kv.first << ":" << kv.second << "\n";
-    }
-}
         errs() << "IntraProceduralGraph: " << F.getName() << "\n";
 	
         for (auto &basic_block : F)
