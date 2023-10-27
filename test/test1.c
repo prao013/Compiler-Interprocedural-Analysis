@@ -1,9 +1,11 @@
-
-void minitest(){}
+void minitest(){
+	int x,y,z;
+	z=x+y;
+}
 
 
 void test() {
-	minitest();
+	
 	int a, b, c, e;
 	e = b + c;
 	if (e > 0) {
@@ -15,3 +17,4 @@ void test() {
 	a = e + c;
 	minitest();
 }
+
