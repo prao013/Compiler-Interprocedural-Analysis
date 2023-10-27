@@ -92,7 +92,7 @@ namespace
                 // errs() << "opCodeName: " << inst.getOpcodeName() << "\n";
                 // errs() << "name:: " << inst.getName() << "\n";
                 // errs() << "metadata: " << inst.hasMetadata();
-
+		/*
                 if (inst.getOpcode() == Instruction::Call)
                 {
                     // case: malloc -> a (allocation edge, label: m)
@@ -114,6 +114,13 @@ namespace
                         edgeList.push_back(newEdge);
                     }
                 }
+		*/
+		if(inst.getOpcode() == Instruction::Call){
+			                Function* G= cast<CallInst>(inst).getCalledFunction();
+					                Function& H=*G;
+									errs()<<"Name of the Func inside Func:"<<G->getName()<<"\n";
+							                errs()<<"Function Inside a Function:"<<H;
+									                }
                 else if (inst.getOpcode() == Instruction::Load)
                 {
                     errs() << "This is Load: " << inst << "\n";
@@ -359,11 +366,7 @@ namespace
                     }
                 } // end if
                 */
-		else if(inst.getOpcode() == Instruction::Call){
-		Function* G= cast<CallInst>(inst).getCalledFunction();
-		Function& H=*G;
-		errs()<<H;
-		}
+		
             } // end for inst
         }     // end for block
 
