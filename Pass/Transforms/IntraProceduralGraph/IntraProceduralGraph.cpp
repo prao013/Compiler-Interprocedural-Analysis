@@ -31,6 +31,12 @@ using namespace llvm;
 // };
 //Suhas Start
 // print the edges
+struct edge
+{
+    string startV;
+    string endV;
+    string label;
+};
 void print(vector<edge> edgeList)
 {
     for (int i = 0; i < edgeList.size(); i++)
@@ -61,12 +67,7 @@ namespace
     {
 
         // Here goes what you want to do with a pass
-	struct edge
-{
-    string startV;
-    string endV;
-    string label;
-};
+	
 
 /// @brief counter. Here we assign numerical vertex no to each expression for pointsto analysis
 /// e.g., a = *b; Here b is assigned 0, *b is assigned 1, and a is assigned 2.
@@ -384,12 +385,7 @@ vector<edge> edgeList;
     {
 if(F.getName()!="test"){return;}
         // Here goes what you want to do with a pass
-struct edge
-{
-    string startV;
-    string endV;
-    string label;
-};
+
 
 /// @brief counter. Here we assign numerical vertex no to each expression for pointsto analysis
 /// e.g., a = *b; Here b is assigned 0, *b is assigned 1, and a is assigned 2.
