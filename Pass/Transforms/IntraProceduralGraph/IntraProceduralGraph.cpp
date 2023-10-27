@@ -30,7 +30,21 @@ using namespace llvm;
 //     ALLOC = "m"
 // };
 //Suhas Start
-struct edge
+
+
+// void print(unordered_map <string, pair<string, string>> targetMap) {
+//     for (const auto &kv : targetMap) {
+//         errs() << kv.first << ": (" << kv.second.first << "," << kv.second.second << ")\n";
+//     }
+// }
+
+namespace
+{
+	void visitor1(Function &F)
+    {
+
+        // Here goes what you want to do with a pass
+	struct edge
 {
     string startV;
     string endV;
@@ -67,19 +81,6 @@ void print(unordered_map<string, string> targetMap)
         errs() << kv.first << ":" << kv.second << "\n";
     }
 }
-
-// void print(unordered_map <string, pair<string, string>> targetMap) {
-//     for (const auto &kv : targetMap) {
-//         errs() << kv.first << ": (" << kv.second.first << "," << kv.second.second << ")\n";
-//     }
-// }
-
-namespace
-{
-	void visitor1(Function &F)
-    {
-
-        // Here goes what you want to do with a pass
 
         errs() << "IntraProceduralGraph: " << F.getName() << "\n";
         for (auto &basic_block : F)
@@ -380,11 +381,47 @@ namespace
     // This method implements what the pass does
     void visitor(Function &F)
     {
-
+if(F.getName()!="test"){return;}
         // Here goes what you want to do with a pass
+struct edge
+{
+    string startV;
+    string endV;
+    string label;
+};
 
+/// @brief counter. Here we assign numerical vertex no to each expression for pointsto analysis
+/// e.g., a = *b; Here b is assigned 0, *b is assigned 1, and a is assigned 2.
+long long int vCounter = 0;
+// malloc counter
+long long int mCounter = 0;
+/// vertex to (expression,type) map. For example, vertex 0 is mapped to *a.
+/// type = ptr, noptr
+unordered_map<string, string> verToExp;
+/// expression to vertex  map. E.g., *a is mapped to 0.
+unordered_map<string, string> expToVer;
+/// edges map. direct edge from k to v. E.g., (1, 2) means 1 has an direct edge to 2.
+vector<edge> edgeList;
+
+// print the edges
+void print(vector<edge> edgeList)
+{
+    for (int i = 0; i < edgeList.size(); i++)
+    {
+        errs() << edgeList[i].startV << "\t" << edgeList[i].endV << "\t" << edgeList[i].label << "\n";
+    }
+}
+
+/// print k-v pairs of a map
+void print(unordered_map<string, string> targetMap)
+{
+    for (const auto &kv : targetMap)
+    {
+        errs() << kv.first << ":" << kv.second << "\n";
+    }
+}
         errs() << "IntraProceduralGraph: " << F.getName() << "\n";
-	if(F.getName()!="test"){return;}
+	
         for (auto &basic_block : F)
         {
             for (auto &inst : basic_block)
