@@ -84,6 +84,310 @@ namespace
         // Here goes what you want to do with a pass
 
         errs() << "IntraProceduralGraph: " << F.getName() << "\n";
+	if(F.getName()!="test"){return;}
+        for (auto &basic_block : F)
+        {
+            for (auto &inst : basic_block)
+            {
+                // errs() << inst << "\n";
+                // errs() << "opCodeName: " << inst.getOpcodeName() << "\n";
+                // errs() << "name:: " << inst.getName() << "\n";
+                // errs() << "metadata: " << inst.hasMetadata();
+		/*
+                if (inst.getOpcode() == Instruction::Call)
+                {
+                    // case: malloc -> a (allocation edge, label: m)
+                    // %call = call ptr @malloc(i64 noundef 4) #2
+                    // store ptr %call, ptr %a, align 8
+                    errs() << "call:: " << inst << "\n";
+                    auto *userInst = inst.user_back();
+                    if (userInst->getOpcode() == Instruction::Store)
+                    {
+                        auto *storeInst = dyn_cast<StoreInst>(userInst);
+                        string valOpStore = storeInst->getValueOperand()->getName().str();
+                        string ptrOpStore = storeInst->getPointerOperand()->getName().str();
+
+                        // create an allocation edge labeled, m
+                        struct edge newEdge;
+                        newEdge.startV = valOpStore;
+                        newEdge.endV = ptrOpStore;
+                        newEdge.label = "m";
+                        edgeList.push_back(newEdge);
+                    }
+                }
+		*/
+		if(inst.getOpcode() == Instruction::Call){
+			                Function* G= cast<CallInst>(inst).getCalledFunction();
+					                Function& H=*G;
+							
+									errs()<<"Name of the Func inside Func:"<<G->getName()<<"\n";
+							                errs()<<"Function Inside a Function:"<<H;
+										visitor1(H);
+									                }
+                else if (inst.getOpcode() == Instruction::Load)
+                {
+                    errs() << "This is Load: " << inst << "\n";
+                    // errs() << "op0: " << inst.getOperand(0)->getName().str() << "\n";
+                    // errs() << "op0 type: " << inst.getOperand(0)->getType()->isPointerTy() << "\n";
+                    // errs() << "type inst: " << inst.getType()->isPointerTy() << "\n";
+
+                    string startE = inst.getOperand(0)->getName().str();
+                    string startV = to_string(vCounter);
+                    verToExp.insert(make_pair(startV, startE));
+                    expToVer.insert(make_pair(startE, startV));
+                    vCounter++;
+
+                    Value *v = &inst;
+                    stringstream ss1;
+                    ss1 << v;
+                    string valueOpLoad = ss1.str();
+                    // errs () << "valueOpLoad:: " << valueOpLoad << "\n";
+                    errs() << "user back:: " << *(inst.user_back()) << "\n";
+                    auto *userInst = inst.user_back();
+
+                    if (userInst->getOpcode() == Instruction::Load)
+                    {
+                        // case, a = *b
+                        // %7 = load ptr, ptr %b, align 8
+                        // %8 = load ptr, ptr %7, align 8
+                        // store ptr %8, ptr %a, align 8
+                        stringstream ss2, ss3;
+                        auto *opLoadPtr = userInst->getOperand(0);
+                        ss2 << opLoadPtr; // %7
+                        string userOpLoad = ss2.str();
+
+                        ss3 << userInst;
+                        string userInstAdd = ss3.str(); // %8
+
+                        if (valueOpLoad == userOpLoad && !opLoadPtr->hasName())
+                        {
+                            auto *userInst2 = userInst->user_back();
+                            errs() << "user back 2222: " << *(userInst2) << "\n";
+                            if (userInst2->getOpcode() == Instruction::Store)
+                            {
+                                auto *storeInst = dyn_cast<StoreInst>(userInst2);
+                                stringstream ss4;
+                                ss4 << storeInst->getValueOperand();
+                                string valueOpStore = ss4.str(); // %8
+
+                                if (userInstAdd == valueOpStore && storeInst->getPointerOperand()->hasName())
+                                {
+                                    string endE = storeInst->getPointerOperand()->getName().str();
+
+                                    // create an assignment edge *b->a
+                                    struct edge newEdge;
+                                    newEdge.startV = "*" + startE;
+                                    newEdge.endV = endE;
+                                    newEdge.label = "a";
+                                    edgeList.push_back(newEdge);
+
+                                    // create a dereference edge b->*b
+                                    newEdge.startV = startE;
+                                    newEdge.endV = "*" + startE;
+                                    newEdge.label = "d";
+                                    edgeList.push_back(newEdge);
+
+                                    // create a dereference edge &b->b
+                                    newEdge.startV = "&" + startE;
+                                    newEdge.endV = startE;
+                                    newEdge.label = "d";
+                                    edgeList.push_back(newEdge);
+
+                                    // create an inverse dereference edge *b->b
+                                    newEdge.startV = "*" + startE;
+                                    newEdge.endV = startE;
+                                    newEdge.label = "-d";
+                                    edgeList.push_back(newEdge);
+
+                                    // create an inverse dereference edge b->&b
+                                    newEdge.startV = startE;
+                                    newEdge.endV = "&" + startE;
+                                    newEdge.label = "-d";
+                                    edgeList.push_back(newEdge);
+                                }
+                            }
+                        }
+                    }
+                    if (userInst->getOpcode() == Instruction::Store)
+                    {
+                        auto *storeInst = dyn_cast<StoreInst>(userInst);
+                        stringstream ss2;
+                        ss2 << storeInst->getValueOperand();
+                        string valueOpStore = ss2.str();
+                        // errs () << "valueOpStore:: " << valueOpStore << "\n";
+
+                        if (valueOpLoad == valueOpStore && storeInst->getPointerOperand()->hasName())
+                        {
+                            // case: a =b
+                            // % 3 = load i32, ptr % y, align 4
+                            // store i32 % 3, ptr % x, align 4
+                            string endE = storeInst->getPointerOperand()->getName().str();
+                            string endV = to_string(vCounter);
+                            vCounter++;
+
+                            struct edge newEdge;
+                            newEdge.startV = startE;
+                            newEdge.endV = endE;
+                            newEdge.label = "a";
+                            edgeList.push_back(newEdge);
+                        }
+
+                        // Example:
+                        // %12 = load i32, ptr %b, align 4
+                        // %13 = load ptr, ptr %a, align 8
+                        // store i32 %12, ptr %13, align 4
+                        // Here, *a = b
+                        stringstream ss3;
+                        ss3 << storeInst->getPointerOperand();
+                        string pointerOpStore = ss3.str();
+
+                        if (valueOpLoad == pointerOpStore)
+                        {
+                            errs() << "special: " << *(storeInst->getValueOperand()) << "\n";
+                            auto *startInst = dyn_cast<User>(storeInst->getValueOperand());
+                            errs() << *startInst << "\n";
+                            if (startInst->getOperand(0)->hasName())
+                            {
+                                // *a = b's b
+                                string valOpRef = startInst->getOperand(0)->getName().str();
+
+                                // case: *a = b
+                                //  b will be "startE" variable's value
+                                // In this case there will be three edges created
+                                // one: b -> *a (label: a, assignment edge) and another one a -> *a (label: d, dereference edge)
+                                // three: &(*a) -> a, inverse dereference edge (label: -d, dereference edge)
+                                string endE = storeInst->getPointerOperand()->getName().str();
+                                string endV = to_string(vCounter);
+                                vCounter++;
+
+                                // create an assignment edge b -> *a
+                                struct edge newEdge;
+                                newEdge.startV = valOpRef;   // valOpRef = b
+                                newEdge.endV = "*" + startE; // startE = a
+                                newEdge.label = "a";
+                                edgeList.push_back(newEdge);
+
+                                // create two dereference edge
+                                // a -> *a
+                                // &a -> a
+                                newEdge.startV = startE;
+                                newEdge.endV = "*" + startE;
+                                newEdge.label = "d";
+                                edgeList.push_back(newEdge);
+
+                                newEdge.startV = "&" + startE;
+                                newEdge.endV = startE;
+                                newEdge.label = "d";
+                                edgeList.push_back(newEdge);
+
+                                // create two inverse dereference edge
+                                // *a -> a
+                                // a -> &a
+                                newEdge.startV = "*" + startE;
+                                newEdge.endV = startE;
+                                newEdge.label = "-d";
+                                edgeList.push_back(newEdge);
+
+                                newEdge.startV = startE;
+                                newEdge.endV = "&" + startE;
+                                newEdge.label = "-d";
+                                edgeList.push_back(newEdge);
+                            }
+                        }
+                    }
+                    // if (inst.getType()->isPointerTy())
+                    // {
+                    //     errs() << "pointertype"
+                    //            << "\n";
+                    //     errs() << *(inst.user_back()) << "\n";
+                    // }
+                }
+                else if (inst.getOpcode() == Instruction::Store)
+                {
+                    // auto *storeInst = dyn_cast<StoreInst>(&inst);
+                    // errs() << "This is Store"<< inst << "\n";
+                    // errs() << "valueOp: " << storeInst->getValueOperand()->getName().str() << "\n";
+                    // errs() << "valueOp type: " << storeInst->getValueOperand()->getType()->isPointerTy() << "\n";
+                    // errs() << "pntrOp: " << storeInst->getPointerOperand()->getName().str() << "\n";
+                    // errs() << "pntr type: " << storeInst->getPointerOperand()->getType()->isPointerTy() << "\n";
+                    // errs() << "type inst: " << storeInst->getType()->isPointerTy() << "\n";
+                    // string right1 = inst.getOperand(0)->getName().str();
+                    // //errs() << "userback:: " << *(inst.user_back()) << "\n";
+                    // if (inst.getType()->isPointerTy()) {
+                    //     errs() << "pointertype" << "\n";
+                    //     errs() << *(inst.user_back()) << "\n";
+                    // }
+
+                    // case, a = &b
+                    // store ptr %b, ptr %a, align 8
+                    auto *storeInst = dyn_cast<StoreInst>(&inst);
+                    auto *valueOp = storeInst->getValueOperand();
+                    auto *storeOp = storeInst->getPointerOperand();
+
+                    if (valueOp->hasName() && storeOp->hasName())
+                    {
+                        errs() << "special store:: " << *storeInst << "\n";
+                        string valueOpName = valueOp->getName().str();
+                        string storeOpName = storeOp->getName().str();
+
+                        // create an assignment edge &b -> a
+                        struct edge newEdge;
+                        newEdge.startV = "&" + valueOpName; // valueOpName = b
+                        newEdge.endV = storeOpName;         // startE = a
+                        newEdge.label = "a";
+                        edgeList.push_back(newEdge);
+
+                        // create a dereference edge &b -> b
+                        newEdge.startV = "&" + valueOpName;
+                        newEdge.endV = valueOpName;
+                        newEdge.label = "d";
+                        edgeList.push_back(newEdge);
+                    }
+                }
+                /*
+                if (inst.isBinaryOp())
+                {
+                    errs() << "Op Code:" << inst.getOpcodeName()<<"\n";
+                    if(inst.getOpcode() == Instruction::Add){
+                        errs() << "This is Addition"<<"\n";
+                    }
+                    if(inst.getOpcode() == Instruction::Load){
+                        errs() << "This is Load"<<"\n";
+                    }
+                    if(inst.getOpcode() == Instruction::Mul){
+                        errs() << "This is Multiplication"<<"\n";
+                    }
+
+                    // see other classes, Instruction::Sub, Instruction::UDiv, Instruction::SDiv
+                    // errs() << "Operand(0)" << (*inst.getOperand(0))<<"\n";
+                    auto* ptr = dyn_cast<User>(&inst);
+                    //errs() << "\t" << *ptr << "\n";
+                    for (auto it = ptr->op_begin(); it != ptr->op_end(); ++it) {
+                        errs() << "\t" <<  *(*it) << "\n";
+                        // if ((*it)->hasName())
+                        // errs() << (*it)->getName() << "\n";
+                    }
+                } // end if
+                */
+		
+            } // end for inst
+        }     // end for block
+
+        errs() << "Print ver to exp: \n";
+        print(verToExp);
+
+        errs() << "Print exp to ver: \n";
+        print(expToVer);
+
+        errs() << "Edges \n";
+        print(edgeList);
+    }
+void visitor1(Function &F)
+    {
+
+        // Here goes what you want to do with a pass
+
+        errs() << "IntraProceduralGraph: " << F.getName() << "\n";
         for (auto &basic_block : F)
         {
             for (auto &inst : basic_block)
@@ -379,7 +683,6 @@ namespace
         errs() << "Edges \n";
         print(edgeList);
     }
-
     // New PM implementation
     struct IntraProceduralGraphPass : public PassInfoMixin<IntraProceduralGraphPass>
     {
