@@ -35,13 +35,14 @@ unordered_map<string, string> verToExp;
 /// expression to vertex  map. E.g., *a is mapped to 0.
 unordered_map<string, string> expToVer;
 /// edges map. direct edge from k to v. E.g., (1, 2) means 1 has an direct edge to 2.
-vector<edge> edgeList;
+
 struct edge
 {
     string startV;
     string endV;
     string label;
 };
+vector<edge> edgeList;
 void print(vector<edge> edgeList)
 {
     for (int i = 0; i < edgeList.size(); i++)
