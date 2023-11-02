@@ -124,6 +124,7 @@ long long int mCounter = 0;
 					                Function& H=*G;
 									errs()<<"Name of the Func inside Func:"<<G->getName()<<"\n";
 							                errs()<<"Function Inside a Function:"<<H;
+									visitor1(H);
 									                }
                 else if (inst.getOpcode() == Instruction::Load)
                 {
