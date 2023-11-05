@@ -35,7 +35,9 @@ unordered_map<string, string> verToExp;
 /// expression to vertex  map. E.g., *a is mapped to 0.
 unordered_map<string, string> expToVer;
 /// edges map. direct edge from k to v. E.g., (1, 2) means 1 has an direct edge to 2.
-
+long long int vCounter = 0;
+// malloc counter
+long long int mCounter = 0;
 struct edge
 {
     string startV;
@@ -77,9 +79,7 @@ namespace
 
 /// @brief counter. Here we assign numerical vertex no to each expression for pointsto analysis
 /// e.g., a = *b; Here b is assigned 0, *b is assigned 1, and a is assigned 2.
-long long int vCounter = 0;
-// malloc counter
-long long int mCounter = 0;
+
 /// vertex to (expression,type) map. For example, vertex 0 is mapped to *a.
 /// type = ptr, noptr
 
@@ -393,9 +393,7 @@ if(F.getName()!="test"){return;}
 
 /// @brief counter. Here we assign numerical vertex no to each expression for pointsto analysis
 /// e.g., a = *b; Here b is assigned 0, *b is assigned 1, and a is assigned 2.
-long long int vCounter = 0;
-// malloc counter
-long long int mCounter = 0;
+
 /// vertex to (expression,type) map. For example, vertex 0 is mapped to *a.
 /// type = ptr, noptr
 
