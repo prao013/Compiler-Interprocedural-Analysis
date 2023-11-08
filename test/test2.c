@@ -1,4 +1,11 @@
+void minitest(){
+	int x,y,z;
+	z=x+y;
+}
+
+
 void test() {
+	minitest();
 	int a, b, c, d, e, f;
 	a = 0;
 	c = 1;
