@@ -43,13 +43,14 @@ struct edge
     string startV;
     string endV;
     string label;
+    string funcname;
 };
 vector<edge> edgeList;
 void print(vector<edge> edgeList)
 {
     for (int i = 0; i < edgeList.size(); i++)
     {
-        errs() << edgeList[i].startV << "\t" << edgeList[i].endV << "\t" << edgeList[i].label << "\n";
+        errs() << edgeList[i].startV << "\t" << edgeList[i].endV << "\t"<< edgeList[i].label << "\t"<<edgeList[i].funcname<<"\n";
     }
 }
 
@@ -181,30 +182,35 @@ namespace
                                     newEdge.startV = "*" + startE;
                                     newEdge.endV = endE;
                                     newEdge.label = "a";
+				    newEdge.funcname=F.getName();
                                     edgeList.push_back(newEdge);
 
                                     // create a dereference edge b->*b
                                     newEdge.startV = startE;
                                     newEdge.endV = "*" + startE;
                                     newEdge.label = "d";
+				    newEdge.funcname=F.getName();
                                     edgeList.push_back(newEdge);
 
                                     // create a dereference edge &b->b
                                     newEdge.startV = "&" + startE;
                                     newEdge.endV = startE;
                                     newEdge.label = "d";
+				    newEdge.funcname=F.getName();
                                     edgeList.push_back(newEdge);
 
                                     // create an inverse dereference edge *b->b
                                     newEdge.startV = "*" + startE;
                                     newEdge.endV = startE;
                                     newEdge.label = "-d";
+				    newEdge.funcname=F.getName();
                                     edgeList.push_back(newEdge);
 
                                     // create an inverse dereference edge b->&b
                                     newEdge.startV = startE;
                                     newEdge.endV = "&" + startE;
                                     newEdge.label = "-d";
+				    newEdge.funcname=F.getName();
                                     edgeList.push_back(newEdge);
                                 }
                             }
@@ -231,6 +237,7 @@ namespace
                             newEdge.startV = startE;
                             newEdge.endV = endE;
                             newEdge.label = "a";
+			    newEdge.funcname=F.getName();
                             edgeList.push_back(newEdge);
                         }
 
@@ -267,6 +274,7 @@ namespace
                                 newEdge.startV = valOpRef;   // valOpRef = b
                                 newEdge.endV = "*" + startE; // startE = a
                                 newEdge.label = "a";
+				newEdge.funcname=F.getName();
                                 edgeList.push_back(newEdge);
 
                                 // create two dereference edge
@@ -275,11 +283,13 @@ namespace
                                 newEdge.startV = startE;
                                 newEdge.endV = "*" + startE;
                                 newEdge.label = "d";
+				newEdge.funcname=F.getName();
                                 edgeList.push_back(newEdge);
 
                                 newEdge.startV = "&" + startE;
                                 newEdge.endV = startE;
                                 newEdge.label = "d";
+				newEdge.funcname=F.getName();
                                 edgeList.push_back(newEdge);
 
                                 // create two inverse dereference edge
@@ -288,11 +298,13 @@ namespace
                                 newEdge.startV = "*" + startE;
                                 newEdge.endV = startE;
                                 newEdge.label = "-d";
+				newEdge.funcname=F.getName();
                                 edgeList.push_back(newEdge);
 
                                 newEdge.startV = startE;
                                 newEdge.endV = "&" + startE;
                                 newEdge.label = "-d";
+				newEdge.funcname=F.getName();
                                 edgeList.push_back(newEdge);
                             }
                         }
@@ -334,15 +346,17 @@ namespace
 
                         // create an assignment edge &b -> a
                         struct edge newEdge;
-                        newEdge.startV = "&" + valueOpName; // valueOpName = b
+                        newEdge.startV =  valueOpName; // valueOpName = b
                         newEdge.endV = storeOpName;         // startE = a
                         newEdge.label = "a";
+			newEdge.funcname=F.getName();
                         edgeList.push_back(newEdge);
 
-                        // create a dereference edge &b -> b
-                        newEdge.startV = "&" + valueOpName;
+                        //create a dereference edge &b -> b
+                        newEdge.startV =  valueOpName;
                         newEdge.endV = valueOpName;
                         newEdge.label = "d";
+			newEdge.funcname=F.getName();
                         edgeList.push_back(newEdge);
                     }
                 }
@@ -375,14 +389,14 @@ namespace
             } // end for inst
         }     // end for block
 
-        errs() << "Print ver to exp: \n";
-        print(verToExp);
+        //errs() << "Print ver to exp: \n";
+        //print(verToExp);
 
-        errs() << "Print exp to ver: \n";
-        print(expToVer);
+        //errs() << "Print exp to ver: \n";
+        //print(expToVer);
 
-        errs() << "Edges \n";
-        print(edgeList);
+        //errs() << "Edges \n";
+        //print(edgeList);
     }
     // This method implements what the pass does
     void visitor(Function &F)
@@ -495,30 +509,35 @@ if(F.getName()!="test"){return;}
                                     newEdge.startV = "*" + startE;
                                     newEdge.endV = endE;
                                     newEdge.label = "a";
+				    newEdge.funcname=F.getName();
                                     edgeList.push_back(newEdge);
 
                                     // create a dereference edge b->*b
                                     newEdge.startV = startE;
                                     newEdge.endV = "*" + startE;
                                     newEdge.label = "d";
+				    newEdge.funcname=F.getName();
                                     edgeList.push_back(newEdge);
 
                                     // create a dereference edge &b->b
                                     newEdge.startV = "&" + startE;
                                     newEdge.endV = startE;
                                     newEdge.label = "d";
+				    newEdge.funcname=F.getName();
                                     edgeList.push_back(newEdge);
 
                                     // create an inverse dereference edge *b->b
                                     newEdge.startV = "*" + startE;
                                     newEdge.endV = startE;
                                     newEdge.label = "-d";
+				    newEdge.funcname=F.getName();
                                     edgeList.push_back(newEdge);
 
                                     // create an inverse dereference edge b->&b
                                     newEdge.startV = startE;
                                     newEdge.endV = "&" + startE;
                                     newEdge.label = "-d";
+				    newEdge.funcname=F.getName();
                                     edgeList.push_back(newEdge);
                                 }
                             }
@@ -545,6 +564,7 @@ if(F.getName()!="test"){return;}
                             newEdge.startV = startE;
                             newEdge.endV = endE;
                             newEdge.label = "a";
+			    newEdge.funcname=F.getName();
                             edgeList.push_back(newEdge);
                         }
 
@@ -581,6 +601,7 @@ if(F.getName()!="test"){return;}
                                 newEdge.startV = valOpRef;   // valOpRef = b
                                 newEdge.endV = "*" + startE; // startE = a
                                 newEdge.label = "a";
+				newEdge.funcname=F.getName();
                                 edgeList.push_back(newEdge);
 
                                 // create two dereference edge
@@ -589,11 +610,13 @@ if(F.getName()!="test"){return;}
                                 newEdge.startV = startE;
                                 newEdge.endV = "*" + startE;
                                 newEdge.label = "d";
+				newEdge.funcname=F.getName();
                                 edgeList.push_back(newEdge);
 
                                 newEdge.startV = "&" + startE;
                                 newEdge.endV = startE;
                                 newEdge.label = "d";
+				newEdge.funcname=F.getName();
                                 edgeList.push_back(newEdge);
 
                                 // create two inverse dereference edge
@@ -602,11 +625,13 @@ if(F.getName()!="test"){return;}
                                 newEdge.startV = "*" + startE;
                                 newEdge.endV = startE;
                                 newEdge.label = "-d";
+				newEdge.funcname=F.getName();
                                 edgeList.push_back(newEdge);
 
                                 newEdge.startV = startE;
                                 newEdge.endV = "&" + startE;
                                 newEdge.label = "-d";
+				newEdge.funcname=F.getName();
                                 edgeList.push_back(newEdge);
                             }
                         }
@@ -648,15 +673,17 @@ if(F.getName()!="test"){return;}
 
                         // create an assignment edge &b -> a
                         struct edge newEdge;
-                        newEdge.startV = "&" + valueOpName; // valueOpName = b
+                        newEdge.startV =  valueOpName; // valueOpName = b
                         newEdge.endV = storeOpName;         // startE = a
                         newEdge.label = "a";
+			newEdge.funcname=F.getName();
                         edgeList.push_back(newEdge);
 
-                        // create a dereference edge &b -> b
-                        newEdge.startV = "&" + valueOpName;
+                        //create a dereference edge &b -> b
+                        newEdge.startV =  valueOpName;
                         newEdge.endV = valueOpName;
                         newEdge.label = "d";
+			newEdge.funcname=F.getName();
                         edgeList.push_back(newEdge);
                     }
                 }
@@ -689,11 +716,11 @@ if(F.getName()!="test"){return;}
             } // end for inst
         }     // end for block
 
-        errs() << "Print ver to exp: \n";
-        print(verToExp);
+       // errs() << "Print ver to exp: \n";
+       // print(verToExp);
 
-        errs() << "Print exp to ver: \n";
-        print(expToVer);
+        //errs() << "Print exp to ver: \n";
+        //print(expToVer);
 
         errs() << "Edges \n";
         print(edgeList);
